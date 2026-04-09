@@ -18,6 +18,47 @@ npm run dev
 
 3. Open `http://localhost:3000`.
 
+## Oracle Cloud VM
+
+This app runs best on a single always-on Node server.
+
+1. Create an Oracle Cloud Always Free VM.
+2. Allow inbound TCP on port `3000` in the VM firewall/security list.
+3. Install Node.js 20+.
+4. Clone this repo onto the VM.
+5. From `avalonAPP/`, run:
+
+```bash
+npm install
+npm run build
+npm start
+```
+
+6. Open `http://<your-vm-public-ip>:3000` in a browser.
+
+The in-memory room state stays available while the VM process is running, which keeps room joins, live updates, and game phases reliable without Redis or a serverless rewrite.
+
+## Auto deploy from GitHub
+
+Pushes to `main` can redeploy the Oracle VM with GitHub Actions.
+
+1. On the VM, clone this repo into a stable path such as `/home/ubuntu/avalonAPP`.
+2. From that directory, run the deploy script once:
+
+```bash
+bash deploy/oracle/deploy.sh
+```
+
+3. In GitHub, add these repository secrets:
+
+- `ORACLE_HOST`
+- `ORACLE_USER`
+- `ORACLE_PORT`
+- `ORACLE_APP_DIR`
+- `ORACLE_SSH_KEY`
+
+4. The workflow at `.github/workflows/deploy-oracle.yml` SSHes into the VM, pulls `main`, runs `npm install`, rebuilds, and restarts the room server.
+
 ## Test commands
 
 Run the unit test suite:

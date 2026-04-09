@@ -1,0 +1,26 @@
+name: Deploy Avalon to Oracle VM
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "avalonAPP/**"
+      - ".github/workflows/deploy-oracle.yml"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.ORACLE_HOST }}
+          username: ${{ secrets.ORACLE_USER }}
+          key: ${{ secrets.ORACLE_SSH_KEY }}
+          port: ${{ secrets.ORACLE_PORT }}
+          script_stop: true
+          script: |
+            cd "${{ secrets.ORACLE_APP_DIR }}"
+            bash deploy/oracle/deploy.sh
