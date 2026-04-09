@@ -24,11 +24,22 @@ jobs:
           script: |
             /bin/bash --noprofile --norc -lc '
               set -euo pipefail
+              set -x
+              echo "WHOAMI=$(whoami)"
+              echo "PWD=$(pwd)"
+              echo "HOME=$HOME"
               export NVM_DIR="$HOME/.nvm"
+              echo "NVM_DIR=$NVM_DIR"
+              ls -la "$NVM_DIR" || true
               if [ -s "$NVM_DIR/nvm.sh" ]; then
                 . "$NVM_DIR/nvm.sh"
-                nvm use 20 >/dev/null
+                nvm use 20.20.2 >/dev/null || nvm use 20 >/dev/null || nvm use --lts >/dev/null || true
               fi
+              command -v node || true
+              command -v npm || true
+              node -v || true
+              npm -v || true
               cd "${{ secrets.ORACLE_APP_DIR }}"
+              echo "APP_DIR=$(pwd)"
               bash deploy/oracle/deploy.sh
             '
