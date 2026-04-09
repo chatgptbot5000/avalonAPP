@@ -26,6 +26,24 @@ load_node_environment() {
   fi
 }
 
+bootstrap_node_if_missing() {
+  if command -v npm >/dev/null 2>&1; then
+    return
+  fi
+
+  if ! command -v sudo >/dev/null 2>&1 || ! command -v apt-get >/dev/null 2>&1; then
+    echo "npm not found and automatic Node install is unavailable. Install Node.js 20+ on the VM, then rerun deploy."
+    exit 1
+  fi
+
+  echo "npm not found; installing Node.js 20 via NodeSource..."
+  curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+  sudo apt-get update
+  sudo apt-get install -y nodejs
+}
+
+load_node_environment
+bootstrap_node_if_missing
 load_node_environment
 
 if [ -f .avalon.pid ]; then
