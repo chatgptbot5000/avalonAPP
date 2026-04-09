@@ -1,6 +1,6 @@
 # Avalon Web Game
 
-Local MVP for hosting an Avalon room in the browser, joining with a room code, and progressing from lobby setup into the game table flow.
+Local MVP for hosting an Avalon room in the browser, joining with a room code, and progressing from lobby setup into the game table flow..
 
 ## Local setup
 
