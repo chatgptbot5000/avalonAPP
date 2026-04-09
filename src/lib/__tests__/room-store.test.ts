@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 
 import { generateRoomCode } from "../room-code"
 import { createRoomStore } from "../room-store"
@@ -252,6 +252,37 @@ describe("room store", () => {
 
     expect(store.getRoom(room.code)?.version).toBe(2)
     expect(versions).toEqual([1])
+  })
+
+  it("resets a finished game with fresh roles for the same room", () => {
+    const randomSpy = vi.spyOn(Math, "random")
+    const values = [0, 0, 0, 0, 0.9, 0.9, 0.9, 0.9]
+    randomSpy.mockImplementation(() => values.shift() ?? 0)
+
+    const store = createRoomStore()
+    const room = store.createRoom("session-host", "Host")
+
+    store.joinRoom(room.code, "session-b", "B")
+    store.joinRoom(room.code, "session-c", "C")
+    store.joinRoom(room.code, "session-d", "D")
+    store.joinRoom(room.code, "session-e", "E")
+    store.startGame(room.code, "session-host")
+
+    const startedRoom = store.getRoom(room.code)
+    if (!startedRoom?.game) {
+      throw new Error("Expected a started game")
+    }
+
+    const firstRoles = { ...startedRoom.game.roles }
+
+    store.resetGame(room.code, "session-host")
+
+    const resetRoom = store.getRoom(room.code)
+
+    expect(resetRoom?.game?.phase).toBe("team-proposal")
+    expect(resetRoom?.game?.proposedTeam).toEqual([])
+    expect(resetRoom?.game?.publicHistory).toEqual([])
+    expect(resetRoom?.game?.roles).not.toEqual(firstRoles)
   })
 })
 

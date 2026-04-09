@@ -2,6 +2,8 @@ import { getPrivateKnowledge } from "@/game/knowledge"
 import type { GameState } from "@/types/game"
 
 export function buildPublicGameView(game: GameState) {
+  const playerNamesById = Object.fromEntries(game.players.map((player) => [player.id, player.name]))
+
   const view = {
     phase: game.phase,
     roundNumber: game.roundNumber,
@@ -9,13 +11,22 @@ export function buildPublicGameView(game: GameState) {
     leaderPlayerId: game.leaderPlayerId,
     teamSize: game.teamSize,
     proposedTeam: game.proposedTeam,
-    publicHistory: game.publicHistory,
+    approvedTeam: game.approvedTeam.map((playerId) => playerNamesById[playerId] ?? playerId),
+    publicHistory: game.publicHistory.map((entry) => ({
+      ...entry,
+      teamMembers: entry.teamMemberIds.map((playerId) => playerNamesById[playerId] ?? playerId),
+    })),
   }
 
   if (game.phase === "game-over") {
     return {
       ...view,
       winner: game.winner,
+      finalReveal: game.players.map((player) => ({
+        playerId: player.id,
+        playerName: player.name,
+        role: game.roles[player.id],
+      })),
     }
   }
 

@@ -25,7 +25,8 @@ This app runs best on a single always-on Node server.
 1. Create an Oracle Cloud Always Free VM.
 2. Allow inbound TCP on port `3000` in the VM firewall/security list.
 3. Install Node.js 20+.
-   - If you use `nvm`, make sure the VM user shell loads it for non-interactive sessions or install Node into a system path like `/usr/local/bin`.
+   - Install it system-wide or make sure the VM user shell loads `nvm` for non-interactive sessions.
+   - The deploy script will not install Node for you; it expects `node` and `npm` to already work on the VM.
 4. Clone this repo onto the VM.
 5. From `avalonAPP/`, run:
 

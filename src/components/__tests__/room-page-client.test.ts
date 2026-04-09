@@ -376,4 +376,74 @@ describe("parseRoomResponse", () => {
       })
     })
   })
+
+  it("lets the host reset the room from the final reveal", async () => {
+    const fetchSpy = vi
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            room: {
+              ...baseRoom,
+              game: {
+                phase: "game-over",
+                roundNumber: 5,
+                questNumber: 5,
+                leaderPlayerId: "p1",
+                teamSize: 3,
+                proposedTeam: ["p1", "p2"],
+                approvedTeam: ["Host", "Guest"],
+                publicHistory: [],
+                winner: "good",
+                finalReveal: [
+                  { playerId: "p1", playerName: "Host", role: "merlin" },
+                  { playerId: "p2", playerName: "Guest", role: "assassin" },
+                ],
+              },
+              private: null,
+            },
+          }),
+        ),
+      )
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            room: {
+              ...baseRoom,
+              version: 3,
+              game: {
+                phase: "team-proposal",
+                roundNumber: 1,
+                questNumber: 1,
+                leaderPlayerId: "p1",
+                teamSize: 2,
+                proposedTeam: [],
+                approvedTeam: [],
+                publicHistory: [],
+              },
+              private: {
+                role: "merlin",
+                privateKnowledge: { seenPlayers: ["Guest"] },
+                canVoteTeam: false,
+                canVoteQuest: false,
+                canPickMerlin: false,
+                canProposeTeam: true,
+              },
+            },
+          }),
+        ),
+      )
+
+    render(createElement(RoomPageClient, { code: "ABCD" }))
+
+    fireEvent.click(await screen.findByRole("button", { name: /play again/i }))
+
+    await waitFor(() => {
+      expect(fetchSpy).toHaveBeenCalledWith("/api/rooms/ABCD/reset", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId: "session-123" }),
+      })
+    })
+  })
 })

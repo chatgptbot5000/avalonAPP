@@ -44,6 +44,139 @@ button {
   cursor: pointer;
 }
 
+.instructions-button {
+  min-width: 10rem;
+}
+
+.preview-page {
+  min-height: 100vh;
+  padding: 2rem;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.preview-page__intro {
+  padding: 1.5rem 1.75rem;
+}
+
+.instructions-modal__backdrop {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: rgba(10, 8, 10, 0.72);
+  z-index: 30;
+}
+
+.instructions-modal {
+  width: min(640px, 100%);
+  max-height: min(86vh, 900px);
+  overflow: auto;
+  padding: 1.5rem;
+}
+
+.instructions-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.instructions-modal__actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.instructions-modal__header button {
+  flex: none;
+}
+
+.instructions-modal__lede {
+  margin-top: 0;
+  color: var(--text-muted);
+}
+
+.instructions-modal__list,
+.instructions-modal__notes ul {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.instructions-modal__list {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.instructions-modal__item {
+  color: var(--text-main);
+}
+
+.instructions-modal__notes {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(214, 195, 151, 0.12);
+}
+
+.instructions-modal__notes strong {
+  display: inline-block;
+  margin-bottom: 0.6rem;
+}
+
+.instructions-modal__footer {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(214, 195, 151, 0.12);
+}
+
+.instructions-modal__footer a {
+  color: var(--accent-gold);
+  text-decoration: none;
+  letter-spacing: 0.08em;
+}
+
+.instructions-modal__section {
+  margin-top: 1rem;
+}
+
+.instructions-modal__section h3 {
+  margin: 0 0 0.85rem;
+}
+
+.instructions-modal__roles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.instructions-modal__role-card {
+  padding: 0.95rem;
+  border-radius: 18px;
+  border: 1px solid rgba(214, 195, 151, 0.12);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.instructions-modal__role-card h4,
+.instructions-modal__role-card p {
+  margin: 0;
+}
+
+.instructions-modal__role-card h4 {
+  margin-bottom: 0.4rem;
+}
+
+.instructions-modal__role-card p + p {
+  margin-top: 0.45rem;
+}
+
+@media (max-width: 720px) {
+  .instructions-modal__roles {
+    grid-template-columns: 1fr;
+  }
+}
+
 .room-shell {
   min-height: 100vh;
   padding: 2rem;

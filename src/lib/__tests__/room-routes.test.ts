@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest"
 import { POST as submitAction } from "@/app/api/rooms/[code]/action/route"
 import { POST as joinRoom } from "@/app/api/rooms/[code]/join/route"
 import { POST as rejoinRoom } from "@/app/api/rooms/[code]/rejoin/route"
+import { POST as resetRoom } from "@/app/api/rooms/[code]/reset/route"
 import { POST as startRoom } from "@/app/api/rooms/[code]/start/route"
 import { POST as createRoom } from "@/app/api/rooms/route"
 import { roomStore } from "@/lib/room-store"
@@ -212,6 +213,54 @@ describe("room routes", () => {
     expect(actionResponse.status).toBe(200)
     expect(actionJson.room.game.phase).toBe("team-vote")
     expect(actionJson.room.game.proposedTeam).toEqual(proposedTeam)
+  })
+
+  it("resets a completed game through the API", async () => {
+    const createResponse = await createRoom(
+      new Request("http://localhost/api/rooms", {
+        method: "POST",
+        body: JSON.stringify({ sessionId: "host-session", name: "Host" }),
+      }),
+    )
+    const createJson = await createResponse.json()
+    const { code } = createJson.room
+
+    for (const [sessionId, name] of [
+      ["guest-session-1", "Guest 1"],
+      ["guest-session-2", "Guest 2"],
+      ["guest-session-3", "Guest 3"],
+      ["guest-session-4", "Guest 4"],
+    ]) {
+      await joinRoom(
+        new Request(`http://localhost/api/rooms/${code}/join`, {
+          method: "POST",
+          body: JSON.stringify({ sessionId, name }),
+        }),
+        { params: { code } },
+      )
+    }
+
+    await startRoom(
+      new Request(`http://localhost/api/rooms/${code}/start`, {
+        method: "POST",
+        body: JSON.stringify({ sessionId: "host-session" }),
+      }),
+      { params: { code } },
+    )
+
+    const response = await resetRoom(
+      new Request(`http://localhost/api/rooms/${code}/reset`, {
+        method: "POST",
+        body: JSON.stringify({ sessionId: "host-session" }),
+      }),
+      { params: { code } },
+    )
+    const json = await response.json()
+
+    expect(response.status).toBe(200)
+    expect(json.room.game.phase).toBe("team-proposal")
+    expect(json.room.game.publicHistory).toEqual([])
+    expect(json.room.game.approvedTeam).toEqual([])
   })
 
   it("returns a 4xx response for duplicate joins", async () => {

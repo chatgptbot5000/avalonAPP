@@ -272,6 +272,7 @@ describe("engine", () => {
       questNumber: 4,
       outcome: "success",
       failCount: 1,
+      teamMemberIds: ["p2", "p4", "p6", "p7"],
     })
     expect(game.phase).toBe("assassin-pick")
   })

@@ -22,6 +22,7 @@ function createGame(overrides: Partial<GameState> = {}): GameState {
     rejectedTeams: 0,
     teamSize: 2,
     proposedTeam: ["p1", "p2"],
+    approvedTeam: [],
     teamVotes: {},
     questVotes: {},
     roles: {
@@ -112,6 +113,7 @@ describe("getPrivateKnowledge", () => {
       leaderPlayerId: "p1",
       teamSize: 2,
       proposedTeam: ["p1", "p2"],
+      approvedTeam: [],
       publicHistory: [],
     })
   })
@@ -126,8 +128,16 @@ describe("getPrivateKnowledge", () => {
       leaderPlayerId: "p1",
       teamSize: 2,
       proposedTeam: ["p1", "p2"],
+      approvedTeam: [],
       publicHistory: [],
       winner: "good",
+      finalReveal: [
+        { playerId: "p1", playerName: "A", role: "assassin" },
+        { playerId: "p2", playerName: "B", role: "merlin" },
+        { playerId: "p3", playerName: "C", role: "morgana" },
+        { playerId: "p4", playerName: "D", role: "mordred" },
+        { playerId: "p5", playerName: "E", role: "loyal-servant" },
+      ],
     })
   })
 

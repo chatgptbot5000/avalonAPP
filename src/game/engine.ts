@@ -71,6 +71,7 @@ function advanceToNextQuest(game: GameState, questOutcome: QuestOutcome): GameSt
     rejectedTeams: 0,
     teamSize: getQuestTeamSize(game.players.length, nextQuestNumber),
     proposedTeam: [],
+    approvedTeam: [],
     teamVotes: {},
     questVotes: {},
   }
@@ -92,6 +93,7 @@ export function createGameState(players: GamePlayer[]): GameState {
     rejectedTeams: 0,
     teamSize: getQuestTeamSize(players.length, 1),
     proposedTeam: [],
+    approvedTeam: [],
     teamVotes: {},
     questVotes: {},
     roles: createRoles(players),
@@ -128,6 +130,7 @@ export function startTeamVote(game: GameState, leaderPlayerId: string, proposedT
     leaderIndex,
     leaderPlayerId,
     proposedTeam: [...proposedTeam],
+    approvedTeam: [],
     teamVotes: {},
     questVotes: {},
   }
@@ -156,6 +159,7 @@ export function submitTeamVote(game: GameState, playerId: string, vote: TeamVote
     return {
       ...game,
       phase: "quest-vote",
+      approvedTeam: [...game.proposedTeam],
       teamVotes,
     }
   }
@@ -175,17 +179,18 @@ export function submitTeamVote(game: GameState, playerId: string, vote: TeamVote
       }
     }
 
-    return {
-      ...game,
-      phase: "team-proposal",
-      roundNumber: game.roundNumber + 1,
-      leaderIndex: nextLeaderIndex,
-      leaderPlayerId: game.players[nextLeaderIndex].id,
-      rejectedTeams,
-      proposedTeam: [],
-      teamVotes,
-      questVotes: {},
-    }
+      return {
+        ...game,
+        phase: "team-proposal",
+        roundNumber: game.roundNumber + 1,
+        leaderIndex: nextLeaderIndex,
+        leaderPlayerId: game.players[nextLeaderIndex].id,
+        rejectedTeams,
+        proposedTeam: [],
+        approvedTeam: [],
+        teamVotes,
+        questVotes: {},
+      }
   }
 
   return {
@@ -244,6 +249,7 @@ export function submitQuestVote(game: GameState, playerId: string, vote: QuestVo
       questNumber: game.questNumber,
       outcome,
       failCount,
+      teamMemberIds: [...game.approvedTeam],
     },
   ]
 

@@ -202,6 +202,22 @@ export function createRoomStore() {
         game: createGameState(room.players.map((player) => ({ id: player.id, name: player.name }))),
       })
     },
+    resetGame(roomCode: string, sessionId: string) {
+      const room = getRoomOrThrow(rooms, roomCode)
+
+      if (room.hostSessionId !== sessionId) {
+        throw new Error("Only the host can reset the game")
+      }
+
+      if (!room.game) {
+        throw new Error("Game not started")
+      }
+
+      return updateRoom(rooms, events, {
+        ...room,
+        game: createGameState(room.players.map((player) => ({ id: player.id, name: player.name }))),
+      })
+    },
     applyAction(roomCode: string, sessionId: string, action: RoomAction) {
       const room = getRoomOrThrow(rooms, roomCode)
       const player = getPlayerForSession(room, sessionId)

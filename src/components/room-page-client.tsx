@@ -128,6 +128,7 @@ export function RoomPageClient({ code }: RoomPageClientProps) {
           action: { type: "submit-assassin-pick", targetPlayerId },
         })
       }
+      onPlayAgain={() => applyRoomMutation(`/api/rooms/${code}/reset`, { sessionId: getOrCreateSessionId() })}
     />
   )
 }

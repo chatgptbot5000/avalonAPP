@@ -33,6 +33,7 @@ export type PublicRoundResult = {
   questNumber: number
   outcome: QuestOutcome
   failCount: number
+  teamMemberIds: string[]
 }
 
 export type GameWinner = "good" | "evil" | null
@@ -48,6 +49,7 @@ export type GameState = {
   rejectedTeams: number
   teamSize: number
   proposedTeam: string[]
+  approvedTeam: string[]
   teamVotes: Record<string, TeamVote>
   questVotes: Record<string, QuestVote>
   roles: Record<string, Role>
