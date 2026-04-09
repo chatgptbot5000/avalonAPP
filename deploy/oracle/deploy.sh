@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
+set -x
+
+trap 'echo "deploy failed at line $LINENO"' ERR
 
 load_node_environment() {
   export PATH="/usr/local/bin:/usr/bin:/bin:$HOME/.local/bin:$PATH"
@@ -45,6 +48,8 @@ load_node_environment() {
 }
 
 load_node_environment
+
+echo "deploy cwd=$(pwd)"
 
 if [ -f .avalon.pid ]; then
   old_pid="$(cat .avalon.pid)"
