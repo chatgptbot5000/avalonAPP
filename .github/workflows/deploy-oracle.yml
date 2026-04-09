@@ -39,7 +39,40 @@ jobs:
               command -v npm || true
               node -v || true
               npm -v || true
-              cd "${{ secrets.ORACLE_APP_DIR }}"
-              echo "APP_DIR=$(pwd)"
-              bash deploy/oracle/deploy.sh
+              deploy_root="${{ secrets.ORACLE_APP_DIR }}"
+              cd "$deploy_root"
+              echo "DEPLOY_ROOT=$(pwd)"
+
+              if [ -d .git ]; then
+                repo_root="$(pwd)"
+              elif [ -d avalonAPP/.git ]; then
+                repo_root="$(pwd)/avalonAPP"
+              else
+                echo "Unable to find a git repository at $deploy_root"
+                exit 1
+              fi
+
+              if [ -f package.json ]; then
+                app_root="$repo_root"
+              elif [ -f "$repo_root/avalonAPP/package.json" ]; then
+                app_root="$repo_root/avalonAPP"
+              else
+                echo "Unable to find package.json under $repo_root"
+                exit 1
+              fi
+
+              echo "REPO_ROOT=$repo_root"
+              echo "APP_ROOT=$app_root"
+
+              cd "$repo_root"
+              git fetch origin main
+              git reset --hard origin/main
+
+              cd "$app_root"
+              npm install
+              npm run build
+
+              pkill -f "next start -H 0.0.0.0" || true
+              nohup npm start > avalon.log 2>&1 &
+              echo $! > .avalon.pid
             '
