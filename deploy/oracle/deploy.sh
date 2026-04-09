@@ -5,8 +5,24 @@ load_node_environment() {
   export PATH="/usr/local/bin:/usr/bin:/bin:$HOME/.local/bin:$PATH"
 
   shopt -s nullglob
-  for bin_dir in "$HOME/.nvm/versions/node"/*/bin /usr/local/lib/nodejs/*/bin /opt/node/*/bin; do
-    PATH="$bin_dir:$PATH"
+  for home_dir in /home/* "$HOME" /root; do
+    for bin_dir in "$home_dir/.nvm/versions/node"/*/bin; do
+      if [ -x "$bin_dir/node" ]; then
+        node_major="$("$bin_dir/node" -p 'process.versions.node.split(".")[0]' 2>/dev/null || echo 0)"
+        if [ "$node_major" -ge 20 ]; then
+          PATH="$bin_dir:$PATH"
+        fi
+      fi
+    done
+  done
+
+  for bin_dir in /usr/local/lib/nodejs/*/bin /opt/node/*/bin; do
+    if [ -x "$bin_dir/node" ]; then
+      node_major="$("$bin_dir/node" -p 'process.versions.node.split(".")[0]' 2>/dev/null || echo 0)"
+      if [ "$node_major" -ge 20 ]; then
+        PATH="$bin_dir:$PATH"
+      fi
+    fi
   done
   shopt -u nullglob
 
