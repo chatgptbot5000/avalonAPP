@@ -1,6 +1,6 @@
 # Avalon Web Game
 
-Local MVP for hosting an Avalon room in the browser, joining with a room code, and progressing from lobby setup into the game table flow..
+Local MVP for hosting an Avalon room in the browser, joining with a room code, and progressing from lobby setup into the game table flow.
 
 ## Local setup
 
@@ -25,6 +25,7 @@ This app runs best on a single always-on Node server.
 1. Create an Oracle Cloud Always Free VM.
 2. Allow inbound TCP on port `3000` in the VM firewall/security list.
 3. Install Node.js 20+.
+   - If you use `nvm`, make sure the VM user shell loads it for non-interactive sessions or install Node into a system path like `/usr/local/bin`.
 4. Clone this repo onto the VM.
 5. From `avalonAPP/`, run:
 
