@@ -2,10 +2,6 @@
 set -euo pipefail
 
 load_node_environment() {
-  if command -v npm >/dev/null 2>&1; then
-    return
-  fi
-
   export PATH="/usr/local/bin:/usr/bin:/bin:$HOME/.local/bin:$PATH"
 
   shopt -s nullglob
@@ -20,30 +16,18 @@ load_node_environment() {
     nvm use --lts >/dev/null 2>&1 || nvm use default >/dev/null 2>&1 || true
   fi
 
-  if ! command -v npm >/dev/null 2>&1; then
-    echo "npm not found. Install Node.js 20+ or source the shell profile that provides it."
+  if ! command -v node >/dev/null 2>&1 || ! command -v npm >/dev/null 2>&1; then
+    echo "node/npm not found. Install Node.js 20+ on the VM (system-wide or via nvm), then rerun deploy."
+    exit 1
+  fi
+
+  node_major="$(node -p 'process.versions.node.split(".")[0]')"
+  if [ "$node_major" -lt 20 ]; then
+    echo "Found Node $(node -v), but this app needs Node 20+. Install or activate Node 20 on the VM, then rerun deploy."
     exit 1
   fi
 }
 
-bootstrap_node_if_missing() {
-  if command -v npm >/dev/null 2>&1; then
-    return
-  fi
-
-  if ! command -v sudo >/dev/null 2>&1 || ! command -v apt-get >/dev/null 2>&1; then
-    echo "npm not found and automatic Node install is unavailable. Install Node.js 20+ on the VM, then rerun deploy."
-    exit 1
-  fi
-
-  echo "npm not found; installing Node.js 20 via NodeSource..."
-  curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-  sudo apt-get update
-  sudo apt-get install -y nodejs
-}
-
-load_node_environment
-bootstrap_node_if_missing
 load_node_environment
 
 if [ -f .avalon.pid ]; then
