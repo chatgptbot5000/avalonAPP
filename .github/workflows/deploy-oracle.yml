@@ -18,6 +18,8 @@ jobs:
       TERM: xterm
       LANG: C.UTF-8
       LC_ALL: C.UTF-8
+      XDG_DATA_DIRS: /usr/local/share:/usr/share
+      XDG_CONFIG_DIRS: /etc/xdg
     steps:
       - name: Deploy over SSH
         uses: appleboy/ssh-action@v1.0.3
@@ -27,7 +29,7 @@ jobs:
           key: ${{ secrets.ORACLE_SSH_KEY }}
           port: ${{ secrets.ORACLE_PORT }}
           script_stop: true
-          envs: LC_BYOBU,LC_TERMTYPE,TERM,LANG,LC_ALL
+          envs: LC_BYOBU,LC_TERMTYPE,TERM,LANG,LC_ALL,XDG_DATA_DIRS,XDG_CONFIG_DIRS
           script: |
             cd "${{ secrets.ORACLE_APP_DIR }}"
             bash deploy/oracle/deploy.sh
